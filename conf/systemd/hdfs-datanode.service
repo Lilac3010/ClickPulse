@@ -1,0 +1,14 @@
+[Unit]
+Description=ClickPulse HDFS datanode (VM2)
+After=network-online.target hdfs-namenode.service
+Wants=network-online.target
+
+[Service]
+User=clickpulse
+EnvironmentFile=/opt/clickpulse/conf/cluster.env
+ExecStart=/opt/hadoop/bin/hdfs datanode
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

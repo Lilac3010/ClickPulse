@@ -1,0 +1,17 @@
+[Unit]
+Description=ClickPulse Kafka broker 2 (VM1)
+After=network-online.target kafka-broker1.service
+Wants=network-online.target
+
+[Service]
+# systemd sends SIGTERM -> Kafka shuts down cleanly. (Do NOT use kafka-server-stop.sh: it kills BOTH brokers.)
+User=clickpulse
+EnvironmentFile=/opt/clickpulse/conf/cluster.env
+Environment="KAFKA_HEAP_OPTS=-Xmx512m -Xms512m"
+ExecStart=/opt/kafka/bin/kafka-server-start.sh /opt/clickpulse/conf/kafka/broker2.properties
+Restart=always
+RestartSec=5
+LimitNOFILE=100000
+
+[Install]
+WantedBy=multi-user.target

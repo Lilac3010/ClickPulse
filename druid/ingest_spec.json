@@ -1,0 +1,41 @@
+{
+  "type": "index_parallel",
+  "spec": {
+    "dataSchema": {
+      "dataSource": "clickpulse_events",
+      "timestampSpec": { "column": "event_time_iso", "format": "iso" },
+      "dimensionsSpec": {
+        "dimensions": [
+          "event_id", "user_id", "session_id", "event_type", "product_id",
+          "category", "device", "event_date",
+          { "type": "long",   "name": "source_day" },
+          { "type": "double", "name": "price" },
+          { "type": "long",   "name": "quantity" },
+          { "type": "double", "name": "revenue" },
+          { "type": "long",   "name": "is_purchase" }
+        ]
+      },
+      "granularitySpec": {
+        "segmentGranularity": "day",
+        "queryGranularity": "none",
+        "rollup": false,
+        "intervals": ["2000-01-01/2100-01-01"]
+      }
+    },
+    "ioConfig": {
+      "type": "index_parallel",
+      "inputSource": {
+        "type": "hdfs",
+        "paths": "hdfs://vm2:9000/clickpulse/export/curated_snapshot/*.parquet"
+      },
+      "inputFormat": { "type": "parquet", "binaryAsString": true },
+      "appendToExisting": false,
+      "dropExisting": true
+    },
+    "tuningConfig": {
+      "type": "index_parallel",
+      "partitionsSpec": { "type": "dynamic" },
+      "maxNumConcurrentSubTasks": 1
+    }
+  }
+}

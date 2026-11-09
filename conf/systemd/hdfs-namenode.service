@@ -1,0 +1,14 @@
+[Unit]
+Description=ClickPulse HDFS namenode (VM2)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=clickpulse
+EnvironmentFile=/opt/clickpulse/conf/cluster.env
+ExecStart=/opt/hadoop/bin/hdfs namenode
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

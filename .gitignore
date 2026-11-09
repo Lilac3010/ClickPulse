@@ -1,0 +1,4 @@
+.venv/
+jars/
+logs/
+__pycache__/
