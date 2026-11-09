@@ -25,6 +25,7 @@ echo ">> [3/6] packages (Java 11, Python, tools)"
 apt-get update -y
 DEBIAN_FRONTEND=noninteractive apt-get install -y openjdk-11-jdk-headless python3 python3-venv python3-pip \
   curl wget rsync netcat-openbsd jq git chrony
+ln -sfn "$(ls -d /usr/lib/jvm/java-11-openjdk-* | head -1)" /usr/lib/jvm/java-11
 timedatectl set-timezone UTC || true          # all VMs on UTC: event_date = UTC date
 systemctl enable --now chrony || true         # clocks in sync across VMs
 
