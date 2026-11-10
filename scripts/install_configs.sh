@@ -32,5 +32,7 @@ if [ -d "$HADOOP_HOME/bin" ] && [ "$(hostname)" = "vm2" ]; then
   cp "$CP"/conf/systemd/hdfs-{namenode,datanode}.service /etc/systemd/system/ && systemctl daemon-reload
   echo "hdfs units   -> /etc/systemd/system"
 fi
+sudo -u clickpulse git -C "$CP" config core.fileMode false 2>/dev/null || true
+chmod +x "$CP"/scripts/*.sh "$CP"/app/*.py "$CP"/spark/*.py 2>/dev/null || true
 chown -R clickpulse:clickpulse "$CP" /data 2>/dev/null || true
 echo "Config fingerprint on $(hostname): $(cd $CP && git rev-parse --short HEAD 2>/dev/null || echo no-git) / $(cat $CP/conf/cluster.env $CP/conf/hadoop/*.xml | md5sum | cut -c1-12)"
