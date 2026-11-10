@@ -6,13 +6,16 @@ set -euo pipefail
 CP=/opt/clickpulse
 set -a; . "$CP/conf/cluster.env"; set +a
 
+backup(){ for f in "$@"; do [ -f "$f" ] && [ ! -f "$f.pre-clickpulse" ] && cp "$f" "$f.pre-clickpulse"; done; return 0; }
 if [ -d "$HADOOP_HOME" ]; then
+  backup "$HADOOP_CONF_DIR"/core-site.xml "$HADOOP_CONF_DIR"/hdfs-site.xml
   cp "$CP"/conf/hadoop/{core-site.xml,hdfs-site.xml} "$HADOOP_CONF_DIR"/
   grep -q "^export JAVA_HOME=$JAVA_HOME" "$HADOOP_CONF_DIR/hadoop-env.sh" || \
     echo "export JAVA_HOME=$JAVA_HOME" >> "$HADOOP_CONF_DIR/hadoop-env.sh"
   echo "hadoop conf  -> $HADOOP_CONF_DIR"
 fi
 if [ -d "$SPARK_HOME" ]; then
+  backup "$SPARK_HOME"/conf/spark-defaults.conf "$SPARK_HOME"/conf/spark-env.sh
   cp "$CP"/conf/spark/spark-defaults.conf "$CP"/conf/spark/spark-env.sh "$SPARK_HOME"/conf/
   echo "spark conf   -> $SPARK_HOME/conf"
 fi

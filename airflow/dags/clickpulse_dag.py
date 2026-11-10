@@ -6,9 +6,13 @@ Every task is idempotent, so re-triggering the same day changes nothing.
 """
 from datetime import datetime, timedelta
 
-from airflow import DAG
-from airflow.models.param import Param
-from airflow.operators.bash import BashOperator
+try:                                   # Airflow 3.x
+    from airflow.sdk import DAG, Param
+    from airflow.providers.standard.operators.bash import BashOperator
+except ImportError:                    # Airflow 2.x
+    from airflow import DAG
+    from airflow.models.param import Param
+    from airflow.operators.bash import BashOperator
 
 SSH = "ssh -o BatchMode=yes -o ConnectTimeout=10 clickpulse@{host} 'bash -lc \"{cmd}\"'"
 DAY = "{{ params.day }}"
