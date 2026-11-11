@@ -20,7 +20,8 @@ def manifest():
     return json.loads(out)
 
 def sql(q):
-    r = requests.post(f"{ROUTER}/druid/v2/sql", json={"query": q}, timeout=60)
+    r = requests.post(f"{ROUTER}/druid/v2/sql", timeout=60,
+                      json={"query": q, "context": {"useApproximateCountDistinct": False}})  # exact COUNT(DISTINCT)
     r.raise_for_status()
     return r.json()
 
@@ -54,7 +55,7 @@ def wait_and_verify(timeout=300):
     while time.time() - t0 < timeout:
         got = druid_totals()
         if got and got["rows"] == want["rows"] and got["ids"] == want["rows"] \
-           and round(got["revenue"] or 0, 2) == want["revenue"] and got["purchases"] == want["purchases"]:
+           and abs((got["revenue"] or 0) - want["revenue"]) < 0.01 and got["purchases"] == want["purchases"]:
             print(f"[druid] MIRRORS curated table: {got}")
             return
         print(f"[druid] waiting for segments... druid={got} curated={want}")
